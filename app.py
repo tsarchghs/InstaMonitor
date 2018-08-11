@@ -1,12 +1,27 @@
 from flask import Flask,request,render_template,url_for,session,redirect
 from flask_session import Session
+from flask_sqlalchemy import SQLAlchemy
 from InstagramAPI import InstagramAPI
 import os
+from datetime import datetime
 
 app = Flask(__name__)
+db = SQLAlchemy(app)
 SESSION_TYPE = 'filesystem'
 sess = Session(app)
 API_URL = 'https://i.instagram.com/api/v1/'
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + str(os.getcwd()) + "/db.sqlite3"
+
+class userFollowData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username_id = db.Column(db.Integer, unique=True, nullable=False)
+    followers = db.Column(db.String(4294000000))
+    followings = db.Column(db.String(4294000000))
+    created = db.Column(db.DateTime, nullable=False,
+        default=datetime.utcnow) 
+    def __repr__(self):
+        return '<userFollowData %r>' % self.id
+db.create_all()
 
 @app.route('/login',methods=["GET","POST"])
 def login():
