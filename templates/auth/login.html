@@ -1,0 +1,13 @@
+<h4>Login</h4>
+<br>
+<form method="POST">
+	{% if invalid_credentials %}
+		Username or password is wrong!
+		<br>
+	{% endif %}
+	Username: <input name="username">
+	<br>
+	Password: <input name="password">
+	<br>
+	<button type="submit">Login</button>
+</form>
