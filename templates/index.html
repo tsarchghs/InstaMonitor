@@ -8,3 +8,9 @@ Followings : {{followings}}
 <br>
 <a href="{{ url_for('logout') }}">Logout</a></center>
 <br>
+Follow back bitch ({{follow_back|length}}):
+<ul>
+	{% for follow in follow_back %}
+		<li>{{follow.username}}</li>
+	{% endfor %}
+</ul>
