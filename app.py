@@ -22,9 +22,7 @@ def login():
 		user = api.login()
 		if user:
 			session["logged_in"] = True
-			session["username_id"] = api.username_id
-			session["username"] = username
-			session["password"] = password
+			session["api"] = api
 			return redirect(url_for("index"))
 		else:
 			return render_template("auth/login.html",invalid_credentials=True)
@@ -32,9 +30,7 @@ def login():
 @app.route("/logout")
 def logout():
 	session["logged_in"] = False
-	session["username_id"] = False
-	session["username"] = False
-	session["password"] = False
+	session["api"] = False
 	return redirect(url_for("login"))
 
 @app.route('/index')
@@ -44,10 +40,8 @@ def index():
 	if "logged_in" in session:
 		if not session["logged_in"]:
 			return redirect(url_for("login"))
-	api = InstagramAPI(session["username"],session["password"])
-	api.login()
-	api.getProfileData()
-	user_info = api.LastJson
+	session["api"].getProfileData()
+	user_info = session["api"].LastJson
 	return render_template("index.html",user_info=user_info)
 
 if __name__ == "__main__":
