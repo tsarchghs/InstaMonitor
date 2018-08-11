@@ -14,9 +14,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + str(os.getcwd()) + "/db.s
 
 class userFollowData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username_id = db.Column(db.Integer, unique=True, nullable=False)
+    username_id = db.Column(db.Integer, nullable=False)
     followers = db.Column(db.String(4294000000))
+    followers_length = db.Column(db.Integer())
     followings = db.Column(db.String(4294000000))
+    followings_length = db.Column(db.Integer())
     created = db.Column(db.DateTime, nullable=False,
         default=datetime.utcnow) 
     def __repr__(self):
@@ -55,10 +57,36 @@ def index():
 	if "logged_in" in session:
 		if not session["logged_in"]:
 			return redirect(url_for("login"))
-	session["api"].getProfileData()
+	api = session["api"]
+	api.getProfileData()
 	user_info = session["api"].LastJson
-	return render_template("index.html",user_info=user_info)
+	userFollowData_obj = userFollowData.query.filter_by(username_id=api.username_id).order_by("-id").first()
+	print(userFollowData_obj)
+	if userFollowData_obj: 
+		followers = userFollowData_obj.followers_length
+		followings = userFollowData_obj.followings_length
+	else:
+		followers = 0
+		followings = 0
+	return render_template("index.html",user_info=user_info,
+							followers=followers,
+							followings=followings)
 
+@app.route('/update')
+def update():
+	if not session["logged_in"] and session["api"]:
+		return redirect(url_for("login"))
+	api = session["api"]
+	followers = api.getTotalFollowers(api.username_id)
+	followings = api.getTotalFollowings(api.username_id)
+	data = userFollowData(username_id=api.username_id,
+						  followers=str(followers),
+						  followers_length=len(followers),
+						  followings=str(followings),
+						  followings_length=len(followings))
+	db.session.add(data)
+	db.session.commit()
+	return redirect(url_for('index'))
 if __name__ == "__main__":
     app.secret_key = '<?>'
     app.config['SESSION_TYPE'] = SESSION_TYPE
