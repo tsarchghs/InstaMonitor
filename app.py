@@ -1,4 +1,4 @@
-from flask import Flask,request,render_template,url_for,session
+from flask import Flask,request,render_template,url_for,session,redirect
 from flask_session import Session
 from InstagramAPI import InstagramAPI
 import os
@@ -9,6 +9,9 @@ sess = Session(app)
 
 @app.route('/login',methods=["GET","POST"])
 def login():
+	if "logged_in" in session:
+		if session["logged_in"]:
+			return redirect(url_for("index"))
 	if request.method == "GET":
 		return render_template("auth/login.html")
 	elif request.method == "POST":
@@ -18,10 +21,9 @@ def login():
 		user = api.login()
 		if user:
 			session["logged_in"] = True
-			return url_for("index")
+			return redirect(url_for("index"))
 		else:
 			return render_template("auth/login.html",invalid_credentials=True)
-		return 0
 
 @app.route('/index')
 def index():
