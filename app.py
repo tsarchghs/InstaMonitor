@@ -20,7 +20,7 @@ class userFollowData(db.Model):
     followings = db.Column(db.String(4294000000))
     followings_length = db.Column(db.Integer())
     follow_back = db.Column(db.String(4294000000))
-    #unfollowed_you = db.Column(db.String(4294000000))
+    unfollowed_you = db.Column(db.String(4294000000))
     #noFollowBack = db.Column(db.String(4294000000))
     created = db.Column(db.DateTime, nullable=False,
         default=datetime.utcnow) 
@@ -69,13 +69,18 @@ def index():
 		followers = userFollowData_obj.followers_length
 		followings = userFollowData_obj.followings_length
 		follow_back = eval(userFollowData_obj.follow_back)
+		unfollowed_you = eval(userFollowData_obj.unfollowed_you)
 	else:
+		follow_back = []
+		followings = []
+		unfollowed_you = []
 		followers = 0
 		followings = 0
 	return render_template("index.html",user_info=user_info,
 							followers=followers,
 							followings=followings,
-							follow_back=follow_back)
+							follow_back=follow_back,
+							unfollowed_you=unfollowed_you)
 
 @app.route('/update')
 def update():
@@ -86,7 +91,7 @@ def update():
 	followers = api.getTotalFollowers(api.username_id)
 	followings = api.getTotalFollowings(api.username_id)
 
-	follow_back = [] 
+	follow_back = []
 	for follow in followers:
 		followBack = True
 		for following in followings:
@@ -95,12 +100,22 @@ def update():
 		if followBack:
 			follow_back.append(follow)
 
+	unfollowed_you = []
+	if last_userFollowData_obj: 
+		for follow in eval(last_userFollowData_obj.followers):
+			unfollowed = True
+			for current_follow in followers:
+				if follow["pk"] == current_follow["pk"]:
+					unfollowed = False
+			if unfollowed:
+				unfollowed_you.append(follow)
 	data = userFollowData(username_id=api.username_id,
 						  followers=str(followers),
 						  followers_length=len(followers),
 						  followings=str(followings),
 						  followings_length=len(followings),
-						  follow_back=str(follow_back))
+						  follow_back=str(follow_back),
+						  unfollowed_you=str(unfollowed_you))
 
 	db.session.add(data)
 	db.session.commit()
