@@ -21,7 +21,8 @@ class userFollowData(db.Model):
     followings_length = db.Column(db.Integer())
     follow_back = db.Column(db.String(4294000000))
     unfollowed_you = db.Column(db.String(4294000000))
-    #noFollowBack = db.Column(db.String(4294000000))
+    noFollowBack = db.Column(db.String(4294000000))
+    mutualFollow = db.Column(db.String(4294000000))
     created = db.Column(db.DateTime, nullable=False,
         default=datetime.utcnow) 
     def __repr__(self):
@@ -70,24 +71,30 @@ def index():
 		followings = userFollowData_obj.followings_length
 		follow_back = eval(userFollowData_obj.follow_back)
 		unfollowed_you = eval(userFollowData_obj.unfollowed_you)
+		noFollowBack = eval(userFollowData_obj.noFollowBack)
+		mutualFollow = eval(userFollowData_obj.mutualFollow)
 	else:
 		follow_back = []
 		followings = []
 		unfollowed_you = []
+		noFollowBack = []
+		mutualFollow = []
 		followers = 0
 		followings = 0
 	return render_template("index.html",user_info=user_info,
 							followers=followers,
 							followings=followings,
 							follow_back=follow_back,
-							unfollowed_you=unfollowed_you)
+							unfollowed_you=unfollowed_you,
+							noFollowBack=noFollowBack,
+							mutualFollow=mutualFollow)
 
 @app.route('/update')
 def update():
 	if not session["logged_in"] and session["api"]:
 		return redirect(url_for("login"))
 	api = session["api"]
-	last_userFollowData_obj = userFollowData.query.filter_by(username_id=api.username_id).order_by("-id").first()
+	last_userFollowData_obj = userFollowData.query.filter_by(username_id=api.username_id).order_by("-	id").first()
 	followers = api.getTotalFollowers(api.username_id)
 	followings = api.getTotalFollowings(api.username_id)
 
@@ -109,13 +116,28 @@ def update():
 					unfollowed = False
 			if unfollowed:
 				unfollowed_you.append(follow)
+
+	noFollowBack = []
+	mutualFollow = []
+	for following in followings:
+		followBackBool = False
+		for follower in followers:
+			if follower["pk"] == following["pk"]:
+				followBackBool = True
+		if followBackBool:
+			mutualFollow.append(following)
+		else:
+			noFollowBack.append(following)
+
 	data = userFollowData(username_id=api.username_id,
 						  followers=str(followers),
 						  followers_length=len(followers),
 						  followings=str(followings),
 						  followings_length=len(followings),
 						  follow_back=str(follow_back),
-						  unfollowed_you=str(unfollowed_you))
+						  unfollowed_you=str(unfollowed_you),
+						  noFollowBack=str(noFollowBack),
+						  mutualFollow=str(mutualFollow))
 
 	db.session.add(data)
 	db.session.commit()
