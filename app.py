@@ -29,6 +29,11 @@ class userFollowData(db.Model):
         return '<userFollowData %r>' % self.id
 db.create_all()
 
+@app.route("/")
+def redirectToLogin():
+	return redirect(url_for("login"))
+
+
 @app.route('/login',methods=["GET","POST"])
 def login():
 	if "logged_in" in session:
