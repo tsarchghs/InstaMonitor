@@ -8,6 +8,24 @@ Followings : {{followings}}
 <br>
 <a href="{{ url_for('logout') }}">Logout</a></center>
 <br>
+Mutual follows ({{mutualFollow|length}}):
+<ul>
+	{% for follow in mutualFollow %}
+		<li>{{follow.username}}</li>
+	{% else %}
+		<li>None</li>
+	{% endfor %}
+</ul>
+<br>
+The ones who're undeserving of your attention (haven't followed back) ({{noFollowBack|length}}):
+<ul>
+	{% for follow in noFollowBack %}
+		<li>{{follow.username}}</li>
+	{% else %}
+		<li>Ehh?</li>
+	{% endfor %}
+</ul><br>
+<br>
 oh my gad look who unfollowed you ({{unfollowed_you|length}}):
 <ul>
 	{% for follow in unfollowed_you %}
