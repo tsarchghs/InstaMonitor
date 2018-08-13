@@ -35,6 +35,12 @@ def follow(userID):
 	api.follow(userID)
 	return redirect(url_for("index"))	
 
+@app.route("/unfollow/<int:userID>")
+def unfollow(userID):
+	api = session["api"]
+	api.unfollow(userID)
+	return redirect(url_for("login"))
+
 @app.route("/")
 def redirectToLogin():
 	return redirect(url_for("login"))
