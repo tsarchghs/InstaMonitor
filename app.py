@@ -29,6 +29,12 @@ class userFollowData(db.Model):
         return '<userFollowData %r>' % self.id
 db.create_all()
 
+@app.route("/follow/<int:userID>")
+def follow(userID):
+	api = session["api"]
+	api.follow(userID)
+	return redirect(url_for("index"))	
+
 @app.route("/")
 def redirectToLogin():
 	return redirect(url_for("login"))
