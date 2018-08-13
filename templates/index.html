@@ -297,7 +297,7 @@ $(".btn-pref .btn").click(function () {
             </button>
         </div>
                     <a href="{{ url_for('update') }}" class="btn btn-block btn-warning">Update</a>
-            <a href="{{ url_for('logout') }}" class="btn btn-block btn-primary">Logout</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-block btn-danger">Logout</a>
     </div>
 
         <div class="well">
@@ -422,7 +422,7 @@ $(".btn-pref .btn").click(function () {
 													</div>
 											</td>
 											<td>
-													<button class="btn btn-primary">Follow</button>
+													<a href="{{ url_for('follow',userID=follow.pk) }}" class="btn btn-primary">Follow</a>
 
 											</td>
 											<td>
