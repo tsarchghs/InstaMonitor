@@ -349,7 +349,7 @@ $(".btn-pref .btn").click(function () {
 											<td>
 											</td>
 											<td>
-													<button class="btn btn-primary">Unfollow</button>
+													<a href="{{ url_for('unfollow',userID=follow.pk) }}" class="btn btn-primary">Unfollow</a>
 
 											</td>
 											<td>
@@ -372,7 +372,7 @@ $(".btn-pref .btn").click(function () {
 											<td>
 											</td>
 											<td>
-													<button class="btn btn-primary">Unfollow</button>
+													<a href="{{ url_for('unfollow',userID=follow.pk) }}" class="btn btn-primary">Unfollow</a>
 
 											</td>
 											<td>
@@ -397,7 +397,7 @@ $(".btn-pref .btn").click(function () {
 													</div>
 											</td>
 											<td>
-													<button class="btn btn-primary">Unfollow</button>
+												<a href="{{ url_for('unfollow',userID=follow.pk) }}" class="btn btn-primary">Unfollow</a>
 
 											</td>
 											<td>
